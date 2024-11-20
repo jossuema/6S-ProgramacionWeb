@@ -12,13 +12,21 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatSort } from '@angular/material/sort';
+import { MatSortModule } from '@angular/material/sort';
+import { MatFormField } from '@angular/material/form-field';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { LoginComponent } from './components/login/login.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
     TablaEmployeesComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
@@ -29,7 +37,10 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatGridListModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
   providers: [
     provideAnimationsAsync()

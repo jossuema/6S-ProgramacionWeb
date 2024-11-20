@@ -69,6 +69,7 @@ export class TablaEmployeesComponent {
     this.editMode = true;
     this.empleadoActual = element;
     this.employeeForm.patchValue(element);
+    this.employeeForm.get('hire_date')?.setValue(new Date(element.hire_date));
   }
 
   actualizarEmpleado(empleadoActualizado: Employee) {

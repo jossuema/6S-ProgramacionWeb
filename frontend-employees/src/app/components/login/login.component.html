@@ -1,0 +1,29 @@
+<div>
+    <h1>LOGIN</h1>
+    <h2>Ingrese sus credenciales: username y contraseña</h2>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form-group">
+        <mat-grid-list cols="2" rowHeight="8:1" gutterSize="16px">
+            <mat-grid-tile>
+                <mat-form-field appearance="fill" class="w-100">
+                  <mat-label>Username</mat-label>
+                  <input matInput formControlName="username" required />
+                  <mat-error *ngIf="loginForm.get('username')?.hasError('required')">Ingrese su usuario</mat-error>
+                </mat-form-field>
+            </mat-grid-tile>
+
+            <mat-grid-tile>
+                <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Contraseña</mat-label>
+                <input matInput formControlName="psw" type="password" required />
+                <mat-error *ngIf="loginForm.get('psw')?.hasError('required')">Ingrese su contraseña</mat-error>
+                </mat-form-field>
+            </mat-grid-tile>
+        </mat-grid-list>
+
+        <div class="d-flex justify-content-between mt-4">
+            <button mat-raised-button color="primary" type="submit">Login</button>
+        </div>
+    </form>
+
+</div>

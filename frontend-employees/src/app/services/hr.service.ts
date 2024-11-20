@@ -1,33 +1,51 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AuthService } from './auth.service'; // Servicio de autenticación
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class HrService {
   private apiUrl = 'http://localhost:3000/';
 
-  constructor(private http:HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) {}
+
+  private getHeaders(): HttpHeaders {
+    const token = this.authService.getToken();
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+  }
 
   getEmployees(): Observable<Employee[]> {
-    return this.http.get<Employee[]>(this.apiUrl + 'employees');
+    return this.http.get<Employee[]>(this.apiUrl + 'employees', {
+      headers: this.getHeaders(),
+    });
   }
 
   getEmployee(id: number): Observable<Employee> {
-    return this.http.get<Employee>(this.apiUrl + 'employees/' + id);
+    return this.http.get<Employee>(this.apiUrl + 'employees/' + id, {
+      headers: this.getHeaders(),
+    });
   }
 
   addEmployee(employee: Employee): Observable<any> {
-    return this.http.post(this.apiUrl + 'employees', employee);
+    return this.http.post(this.apiUrl + 'employees', employee, {
+      headers: this.getHeaders(),
+    });
   }
 
   updateEmployee(employee: Employee): Observable<any> {
-    return this.http.put(this.apiUrl + 'employees/' + employee.employee_id, employee);
+    return this.http.put(this.apiUrl + 'employees/' + employee.employee_id, employee, {
+      headers: this.getHeaders(),
+    });
   }
 
   deleteEmployee(id: number): Observable<any> {
-    return this.http.delete(this.apiUrl + 'employees/' + id);
+    return this.http.delete(this.apiUrl + 'employees/' + id, {
+      headers: this.getHeaders(),
+    });
   }
 }
 

@@ -1,71 +1,107 @@
 <h1>Tabla de Empleados</h1>
 
-<form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
-    <mat-form-field>
-      <mat-label>Nombre</mat-label>
-      <input matInput formControlName="first_name" required>
-      <mat-error *ngIf="employeeForm.get('first_name')?.hasError('required')">El nombre es obligatorio</mat-error>
-    </mat-form-field>
-  
-    <mat-form-field>
-      <mat-label>Apellido</mat-label>
-      <input matInput formControlName="last_name" required>
-      <mat-error *ngIf="employeeForm.get('last_name')?.hasError('required')">El apellido es obligatorio</mat-error>
-    </mat-form-field>
-  
-    <mat-form-field>
-      <mat-label>Email</mat-label>
-      <input matInput formControlName="email" type="email" required>
-      <mat-error *ngIf="employeeForm.get('email')?.hasError('required')">El email es obligatorio</mat-error>
-      <mat-error *ngIf="employeeForm.get('email')?.hasError('email')">Email inválido</mat-error>
-    </mat-form-field>
-  
-    <mat-form-field>
-      <mat-label>Celular</mat-label>
-      <input matInput formControlName="phone_number" required>
-      <mat-error *ngIf="employeeForm.get('phone_number')?.hasError('required')">El número de celular es obligatorio</mat-error>
-    </mat-form-field>
+<form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="form-group">
+  <mat-grid-list cols="2" rowHeight="8:1" gutterSize="16px">
+    <!-- Campo Nombre -->
+    <mat-grid-tile>
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="first_name" required />
+        <mat-error *ngIf="employeeForm.get('first_name')?.hasError('required')">El nombre es obligatorio</mat-error>
+      </mat-form-field>
+    </mat-grid-tile>
 
-    <mat-form-field>
-        <mat-label>Fecha de contrato</mat-label>
-        <input matInput formControlName="hire_date" required>
-        <mat-error *ngIf="employeeForm.get('hire_date')?.hasError('required')">La fecha de contrato es obligatoria</mat-error>
-    </mat-form-field>
+    <!-- Campo Apellido -->
+    <mat-grid-tile>
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>Apellido</mat-label>
+        <input matInput formControlName="last_name" required />
+        <mat-error *ngIf="employeeForm.get('last_name')?.hasError('required')">El apellido es obligatorio</mat-error>
+      </mat-form-field>
+    </mat-grid-tile>
 
-    <mat-form-field>
-        <mat-label>job_id</mat-label>
-        <input matInput formControlName="job_id" required>
-        <mat-error *ngIf="employeeForm.get('job_id')?.hasError('required')">El job_id es obligatorio</mat-error>
-    </mat-form-field>
+    <!-- Campo Email -->
+    <mat-grid-tile>
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email" required />
+        <mat-error *ngIf="employeeForm.get('email')?.hasError('required')">El email es obligatorio</mat-error>
+        <mat-error *ngIf="employeeForm.get('email')?.hasError('email')">Email inválido</mat-error>
+      </mat-form-field>
+    </mat-grid-tile>
 
-    <mat-form-field>
+    <!-- Campo Celular -->
+    <mat-grid-tile>
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>Celular</mat-label>
+        <input matInput formControlName="phone_number" required />
+        <mat-error *ngIf="employeeForm.get('phone_number')?.hasError('required')">El número de celular es obligatorio</mat-error>
+      </mat-form-field>
+    </mat-grid-tile>
+
+    <!-- Campo Fecha de contrato -->
+    <mat-grid-tile>
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>Choose a date</mat-label>
+        <input matInput [matDatepicker]="picker">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>      
+    </mat-grid-tile>
+
+    <!-- Campo Job ID -->
+    <mat-grid-tile>
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>Job ID</mat-label>
+        <input matInput formControlName="job_id" required />
+        <mat-error *ngIf="employeeForm.get('job_id')?.hasError('required')">El job ID es obligatorio</mat-error>
+      </mat-form-field>
+    </mat-grid-tile>
+
+    <!-- Campo Salario -->
+    <mat-grid-tile>
+      <mat-form-field appearance="fill" class="w-100">
         <mat-label>Salario</mat-label>
-        <input matInput formControlName="salary" required>
+        <input matInput formControlName="salary" required />
         <mat-error *ngIf="employeeForm.get('salary')?.hasError('required')">El salario es obligatorio</mat-error>
-    </mat-form-field>
+      </mat-form-field>
+    </mat-grid-tile>
 
-    <mat-form-field>
-        <mat-label>Porcentaje comision</mat-label>
-        <input matInput formControlName="commission_pct" required>
+    <!-- Campo Porcentaje Comisión -->
+    <mat-grid-tile>
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>Porcentaje Comisión</mat-label>
+        <input matInput formControlName="commission_pct" required />
         <mat-error *ngIf="employeeForm.get('commission_pct')?.hasError('required')">El porcentaje de comisión es obligatorio</mat-error>
-    </mat-form-field>
+      </mat-form-field>
+    </mat-grid-tile>
 
-    <mat-form-field>
-        <mat-label>Id manager</mat-label>
-        <input matInput formControlName="manager_id" required>
-        <mat-error *ngIf="employeeForm.get('manager_id')?.hasError('required')">El id manager es obligatorio</mat-error>
-    </mat-form-field>
+    <!-- Campo ID Manager -->
+    <mat-grid-tile>
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>ID Manager</mat-label>
+        <input matInput formControlName="manager_id" required />
+        <mat-error *ngIf="employeeForm.get('manager_id')?.hasError('required')">El ID Manager es obligatorio</mat-error>
+      </mat-form-field>
+    </mat-grid-tile>
 
-    <mat-form-field>
-        <mat-label>Id departamento</mat-label>
-        <input matInput formControlName="department_id" required>
-        <mat-error *ngIf="employeeForm.get('department_id')?.hasError('required')">El id departamento es obligatorio</mat-error>
-    </mat-form-field>
+    <!-- Campo ID Departamento -->
+    <mat-grid-tile>
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>ID Departamento</mat-label>
+        <input matInput formControlName="department_id" required />
+        <mat-error *ngIf="employeeForm.get('department_id')?.hasError('required')">El ID Departamento es obligatorio</mat-error>
+      </mat-form-field>
+    </mat-grid-tile>
+  </mat-grid-list>
 
-    
+  <!-- Botones de Acción -->
+  <div class="d-flex justify-content-between mt-4">
     <button mat-raised-button color="primary" type="submit">{{ editMode ? 'Actualizar' : 'Agregar' }} Empleado</button>
-    <button mat-button type="button" color="primary" (click)="resetFormulario()">Cancelar</button>
-  </form>
+    <button mat-button type="button" color="warn" (click)="resetFormulario()">Cancelar</button>
+  </div>
+</form>
 
 <table mat-table [dataSource]="registros" class="mat-elevation-z8">
 
