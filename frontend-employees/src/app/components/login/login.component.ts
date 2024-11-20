@@ -18,15 +18,33 @@ export class LoginComponent {
     })
   }
 
-  onSubmit() {
-    this.authService.login(this.loginForm.get('username')?.value , this.loginForm.get('psw')?.value).subscribe({
+  onSubmit(): void {
+    if (this.loginForm.invalid) {
+      alert('Por favor, completa todos los campos correctamente.');
+      return;
+    }
+  
+    const username = this.loginForm.get('username')?.value;
+    const psw = this.loginForm.get('psw')?.value;
+  
+    this.authService.login(username, psw).subscribe({
       next: (response) => {
         console.log('Login exitoso:', response);
+        if (response.token) {
+          localStorage.setItem('token', response.token);
+        }
         this.router.navigate(['/employees']);
       },
       error: (error) => {
         console.error('Error al iniciar sesión:', error);
-        alert('Credenciales incorrectas');
+  
+        if (error.status === 401) {
+          alert('Credenciales incorrectas. Intenta nuevamente.');
+        } else if (error.status === 400) {
+          alert('Solicitud incorrecta. Por favor, verifica los datos ingresados.');
+        } else {
+          alert('Ocurrió un error inesperado. Intenta más tarde.');
+        }
       },
     });
   }

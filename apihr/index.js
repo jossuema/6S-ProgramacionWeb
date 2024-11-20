@@ -26,24 +26,29 @@ app.use(express.urlencoded({ extended: false }));
 app.use(require('./routes/employees'));
 app.use(require('./routes/departments'));
 
-//ruta para generar token
-app.post('/login', (req, res) => {
-    // simulacion de usuario
-    const { username, psw } = req.body;
-    console.log(username, psw);
-    const user = getUserAuth(username, psw);
-
-    if(!user){
-        res.json(
-            { 
-                message: 'Credenciales incorrectas'
-            }
-        )
-        return;
+app.post('/login', async (req, res) => {
+    try {
+        const { username, psw } = req.body;
+        if (!username || !psw) {
+            return res.status(400).json({ message: 'Faltan credenciales' });
+        }
+        const user = await getUserAuth(username, psw);
+        if (!user) {
+            return res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
+        }
+        const token = jwt.sign(
+            { id: user.id, username: user.username },
+            process.env.JWT_SECRET || 'defaultSecret',
+            { expiresIn: '15m' }
+        );
+        res.status(200).json({
+            message: 'Autenticación correcta',
+            token: token,
+        });
+    } catch (error) {
+        console.error('Error en /login:', error.message);
+        res.status(500).json({ message: 'Error interno del servidor' });
     }
-
-    const token = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
 });
 
 app.listen(3000, () => {

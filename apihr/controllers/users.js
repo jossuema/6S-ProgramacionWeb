@@ -33,16 +33,24 @@ const insertUser = async (req, res) => {
 }
 
 const getUserAuth = async (username, psw) => {
-    try{
-        const response = await pool.query('SELECT * FROM users WHERE username = $1 AND psw = $2', [username, psw]);
+    try {
+        const response = await pool.query(
+            'SELECT * FROM users WHERE username = $1 AND psw = $2',
+            [username, psw]
+        );
+
+        if (response.rows.length === 0) {
+            return null;
+        }
+
         const user = response.rows[0];
-        console.log(user);
         return user;
-    }catch (e) {
-        console.log(e);
+    } catch (error) {
+        console.error('Error en getUserAuth:', error.message);
         return null;
     }
-}
+};
+
 
 module.exports = {
     getUsers,
