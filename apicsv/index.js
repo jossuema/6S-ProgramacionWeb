@@ -19,39 +19,68 @@ const pool = new Pool({
 
 const upload = multer({ dest: 'uploads/' });
 
-app.post('/upload', upload.single('file'), (req, res) => {
+app.post('/upload', upload.single('file'), async (req, res) => {
   if (!req.file) {
     return res.status(400).send('No se ha subido ningún archivo');
   }
 
   console.log('Importando datos desde CSV...');
-
+  const filePath = req.file.path;
   const fileRows = [];
 
-  fs.createReadStream(req.file.path)
-  .pipe(csv.parse({ headers: true }))
-  .on('data', (row) => {
-    fileRows.push(row);  // Cada fila es un objeto con las claves como nombres de columna
-  })
-  .on('end', () => {
-
-    const insertQuery = `INSERT INTO departments (department_name, manager_id, location_id) VALUES ($1, $2, $3)`;
-
-    fileRows.forEach(async (row) => {
-      try {
-        await pool.query(insertQuery, [
-          row.department_name,
-          row.manager_id,
-          row.location_id
-        ]);
-      } catch (err) {
-        console.error('Error al insertar los datos:', err);
-      }
+  try {
+    await new Promise((resolve, reject) => {
+      fs.createReadStream(filePath)
+        .pipe(csv.parse({ headers: true }))
+        .on('data', (row) => {
+          if (row.department_name && row.manager_id && row.location_id) {
+            fileRows.push(row);
+          }
+        })
+        .on('end', resolve)
+        .on('error', reject);
     });
 
-    res.send('Datos importados exitosamente');
-  });
+    fs.unlinkSync(filePath);
+
+    if (fileRows.length === 0) {
+      return res.status(400).send('El archivo no contiene datos válidos para importar');
+    }
+
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      // Eliminar datos antiguos (esto puede causar errores si no manejas relaciones)
+      await client.query('DELETE FROM departments');
+
+      // Insertar los nuevos datos
+      const insertQuery = `INSERT INTO departments (department_name, manager_id, location_id) 
+                           VALUES ($1, $2, $3)`;
+
+      for (const row of fileRows) {
+        await client.query(insertQuery, [
+          row.department_name,
+          row.manager_id,
+          row.location_id,
+        ]);
+      }
+
+      await client.query('COMMIT');
+      res.send('Datos reemplazados exitosamente');
+    } catch (err) {
+      await client.query('ROLLBACK');
+      console.error('Error durante la importación:', err);
+      res.status(500).send('Error al importar los datos');
+    } finally {
+      client.release();
+    }
+  } catch (err) {
+    console.error('Error al procesar el archivo CSV:', err);
+    res.status(500).send('Error al procesar el archivo CSV');
+  }
 });
+
 
 // Ruta para exportar datos de PostgreSQL a un archivo CSV
 app.get('/export', async (req, res) => {
