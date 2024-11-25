@@ -1,0 +1,18 @@
+<!-- dividir entre dos div secciones Exportar e Importar-->
+ <div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Exportar</h2>
+            <button class="btn btn-primary" (click)="exportCsv()">
+                Exportar CSV
+            </button>
+        </div>
+        <div class="col-md-6">
+            <h2>Importar</h2>
+            <input type="file"  (change)="uploadCsv()" />
+        </div>
+    </div>
+    
+    <mat-spinner *ngIf="isLoaded" color="primary"></mat-spinner>
+
+ </div>
