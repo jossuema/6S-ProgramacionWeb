@@ -13,6 +13,22 @@ const getDepartamentos = async (req, res) => {
     }
 }
 
+const getDepartmentsById = async (req, res) => {
+    try {
+        const client = await pool.connect();
+        const response = await pool.query('SELECT * FROM departments WHERE department_id = $1', [req.params.id]);
+        client.release();
+        if (response.rows.length === 0) {
+            res.status(404).send('Departamento no encontrado');
+        } else {
+            res.json(response.rows);
+        }
+    } catch (e) {
+        console.log(e);
+        res.status(500).send('Hubo un error');
+    }
+}
+
 const insertDepartamentos = async (req, res) => {
     try {
         const { department_name, manager_id, location_id } = req.body;
@@ -69,5 +85,6 @@ module.exports = {
     getDepartamentos,
     insertDepartamentos,
     deleteDepartamento,
-    updateDepartment
+    updateDepartment,
+    getDepartmentsById
 };
