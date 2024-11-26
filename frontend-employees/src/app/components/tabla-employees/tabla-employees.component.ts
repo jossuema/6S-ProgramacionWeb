@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HrService } from '../../services/hr.service';
-import { Employee } from '../../services/hr.service';
+import { Employee, Department } from '../../services/hr.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ViewChild } from '@angular/core';
@@ -13,11 +13,15 @@ import { MatSort } from '@angular/material/sort';
   styleUrl: './tabla-employees.component.css'
 })
 export class TablaEmployeesComponent {
-  displayedColumns: string[] = ['id', 'Nombre', 'Apellido', 'Email', 'Celular', 'Fecha de contrato', 'job_id', 'Salario', 'Porcentaje comision', 'Id manager', 'Id departamento', 'acciones'];
+  displayedColumns: string[] = ['id', 'Nombre', 'Apellido', 'Email', 'Celular', 'Fecha de contrato', 'job_id', 'Salario', 'Porcentaje comision', 'Nombre Manager', 'Nombre departamento', 'acciones'];
   registros = new MatTableDataSource<Employee>();
   employeeForm: FormGroup;
   editMode = false;
   empleadoActual: Employee | null = null;
+  isLoading: boolean = false;
+  currentAction: 'import' | 'export' | null = null;
+  managers: Employee[] = [];
+  departments: Department[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
   @ViewChild(MatSort) sort: MatSort | null = null;
@@ -39,10 +43,32 @@ export class TablaEmployeesComponent {
   }
 
   ngOnInit() {
-    this.hrService.getEmployees().subscribe((data: Employee[]) => {
-      this.registros.data = data;
+    // Obtener empleados
+    this.hrService.getEmployees().subscribe((employees: Employee[]) => {
+      // Obtener departamentos
+      this.hrService.getDepartments().subscribe((departments: Department[]) => {
+        this.departments = departments;
+        this.managers = employees;
+
+        employees.forEach(employee => {
+          const department = departments.find(d => d.department_id === employee.department_id);
+          employee['department_name'] = department ? department.department_name : 'N/A';
+        });
+  
+        // Obtener managers
+        this.hrService.getEmployees().subscribe((managers: Employee[]) => {
+          employees.forEach(employee => {
+            const manager = managers.find(m => m.employee_id === employee.manager_id);
+            employee['manager_name'] = manager
+              ? `${manager.first_name} ${manager.last_name}`
+              : 'N/A';
+          });
+  
+          this.registros.data = employees;
+        });
+      });
     });
-  }
+  }  
 
   ngAfterViewInit() {
     this.registros.paginator = this.paginator;
@@ -94,4 +120,50 @@ export class TablaEmployeesComponent {
     this.empleadoActual = null;
     this.employeeForm.reset();
   }
+
+  exportarEmpleados() {
+    this.isLoading = true; // Activar carga
+    this.currentAction = 'export'; // Establecer acción actual
+    this.hrService.exportEmployees().subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'employees.csv';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error al exportar:', err);
+        alert('Error al exportar empleados');
+      },
+      complete: () => {
+        this.isLoading = false; // Desactivar carga
+        this.currentAction = null; // Resetear acción
+      }
+    });
+  }  
+  
+  importarEmpleados(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.isLoading = true; // Activar carga
+      this.currentAction = 'import'; // Establecer acción actual
+      this.hrService.importEmployees(file).subscribe({
+        next: () => {
+          alert('Empleados importados exitosamente');
+          this.ngOnInit();
+        },
+        error: (err) => {
+          console.error('Error al importar:', err);
+          alert('Error al importar empleados');
+        },
+        complete: () => {
+          this.isLoading = false; // Desactivar carga
+          this.currentAction = null; // Resetear acción
+        }
+      });
+    }
+  }   
 }

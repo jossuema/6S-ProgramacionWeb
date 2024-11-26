@@ -20,6 +20,10 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatFormField } from '@angular/material/form-field';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { LoginComponent } from './components/login/login.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -41,6 +45,11 @@ import { LoginComponent } from './components/login/login.component';
     MatGridListModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatSortModule,
+    MatProgressSpinnerModule,
+    MatProgressBarModule,
+    MatOptionModule,
+    MatSelectModule
   ],
   providers: [
     provideAnimationsAsync()

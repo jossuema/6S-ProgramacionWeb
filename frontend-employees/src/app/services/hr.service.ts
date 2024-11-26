@@ -47,6 +47,39 @@ export class HrService {
       headers: this.getHeaders(),
     });
   }
+
+  getEmployeeById(id: number): Observable<Employee> {
+    return this.http.get<Employee>(this.apiUrl + 'employees/' + id, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  getDepartments(): Observable<Department[]> {
+    return this.http.get<Department[]>(this.apiUrl + 'departments', {
+      headers: this.getHeaders(),
+    });
+  }
+
+  getDepartmentById(id: number): Observable<Department> {
+    return this.http.get<Department>(this.apiUrl + 'departments/' + id, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  exportEmployees(): Observable<any> {
+    return this.http.get(this.apiUrl + 'employees/export', {
+      headers: this.getHeaders(),
+      responseType: 'blob',
+    });
+  }
+
+  importEmployees(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(this.apiUrl + 'employees/import', formData, {
+      headers: this.getHeaders().delete('Content-Type'),
+    });
+  }
 }
 
 export interface Employee {
@@ -60,5 +93,14 @@ export interface Employee {
   salary: number;
   commission_pct: number;
   manager_id: number;
+  manager_name?: string;
   department_id: number;
+  department_name?: string;
+}
+
+export interface Department {
+  department_id: number;
+  department_name: string;
+  manager_id: number;
+  location_id: number;
 }

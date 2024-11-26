@@ -1,10 +1,90 @@
 <h1>Tabla de Empleados</h1>
 
-<form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="form-group">
-  <mat-grid-list cols="2" rowHeight="8:1" gutterSize="16px">
+<table mat-table [dataSource]="registros" class="mat-elevation-z8">
+
+  <!-- Columna de ID -->
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef> ID </th>
+    <td mat-cell *matCellDef="let element"> {{element.employee_id}} </td>
+  </ng-container>
+
+  <!-- Columna de Nombre -->
+  <ng-container matColumnDef="Nombre">
+    <th mat-header-cell *matHeaderCellDef> Nombre </th>
+    <td mat-cell *matCellDef="let element"> {{element.first_name}} </td>
+  </ng-container>
+
+  <!-- Columna de Apellido -->
+  <ng-container matColumnDef="Apellido">
+    <th mat-header-cell *matHeaderCellDef> Apellido </th>
+    <td mat-cell *matCellDef="let element"> {{element.last_name}} </td>
+  </ng-container>
+
+  <!-- Columna de Correo -->
+  <ng-container matColumnDef="Email">
+    <th mat-header-cell *matHeaderCellDef> Email </th>
+    <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Celular">
+      <th mat-header-cell *matHeaderCellDef> Celular </th>
+      <td mat-cell *matCellDef="let element"> {{element.phone_number}} </td>
+  </ng-container>
+  
+  <ng-container matColumnDef="Fecha de contrato">
+      <th mat-header-cell *matHeaderCellDef> Fecha de contrato </th>
+      <td mat-cell *matCellDef="let element"> {{element.hire_date | date:'dd/MM/yyyy'}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="job_id">
+      <th mat-header-cell *matHeaderCellDef> job_id </th>
+      <td mat-cell *matCellDef="let element"> {{element.job_id}} </td>
+  </ng-container>
+  
+  <ng-container matColumnDef="Salario">
+      <th mat-header-cell *matHeaderCellDef> Salario </th>
+      <td mat-cell *matCellDef="let element"> {{element.salary}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Porcentaje comision">
+      <th mat-header-cell *matHeaderCellDef> Porcentaje Comision </th>
+      <td mat-cell *matCellDef="let element"> {{element.commission_pct}} </td>
+  </ng-container>
+  
+  <ng-container matColumnDef="Nombre Manager">
+      <th mat-header-cell *matHeaderCellDef> Id manager </th>
+      <td mat-cell *matCellDef="let element"> {{element.manager_name}} </td>
+  </ng-container>
+  
+  <ng-container matColumnDef="Nombre departamento">
+      <th mat-header-cell *matHeaderCellDef> Id departamento </th>
+      <td mat-cell *matCellDef="let element"> {{element.department_name}} </td>
+  </ng-container>
+
+  <!-- Columna de Acciones -->
+  <ng-container matColumnDef="acciones" class="botones">
+    <th mat-header-cell *matHeaderCellDef> Acciones </th>
+    <td mat-cell *matCellDef="let element">
+      <button mat-button color="primary" (click)="editarEmpleado(element)">Editar</button>
+      <button mat-button color="warn" (click)="eliminarEmpleado(element.employee_id)">Eliminar</button>
+    </td>
+  </ng-container>
+  
+
+  <!-- Header y Rows -->
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+<form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="form-group ">
+  <h1>Insertar o Editar empleado</h1>
+
+  <mat-grid-list cols="2" rowHeight="5rem" gutterSize="16px">
     <!-- Campo Nombre -->
     <mat-grid-tile>
-      <mat-form-field appearance="fill" class="w-100">
+      <mat-form-field appearance="fill" class="w-75">
         <mat-label>Nombre</mat-label>
         <input matInput formControlName="first_name" required />
         <mat-error *ngIf="employeeForm.get('first_name')?.hasError('required')">El nombre es obligatorio</mat-error>
@@ -13,7 +93,7 @@
 
     <!-- Campo Apellido -->
     <mat-grid-tile>
-      <mat-form-field appearance="fill" class="w-100">
+      <mat-form-field appearance="fill" class="w-75">
         <mat-label>Apellido</mat-label>
         <input matInput formControlName="last_name" required />
         <mat-error *ngIf="employeeForm.get('last_name')?.hasError('required')">El apellido es obligatorio</mat-error>
@@ -22,7 +102,7 @@
 
     <!-- Campo Email -->
     <mat-grid-tile>
-      <mat-form-field appearance="fill" class="w-100">
+      <mat-form-field appearance="fill" class="w-75">
         <mat-label>Email</mat-label>
         <input matInput formControlName="email" type="email" required />
         <mat-error *ngIf="employeeForm.get('email')?.hasError('required')">El email es obligatorio</mat-error>
@@ -32,7 +112,7 @@
 
     <!-- Campo Celular -->
     <mat-grid-tile>
-      <mat-form-field appearance="fill" class="w-100">
+      <mat-form-field appearance="fill" class="w-75">
         <mat-label>Celular</mat-label>
         <input matInput formControlName="phone_number" required />
         <mat-error *ngIf="employeeForm.get('phone_number')?.hasError('required')">El número de celular es obligatorio</mat-error>
@@ -41,7 +121,7 @@
 
     <!-- Campo Fecha de contrato -->
     <mat-grid-tile>
-      <mat-form-field appearance="fill" class="w-100">
+      <mat-form-field appearance="fill" class="w-75">
         <mat-label>Choose a date</mat-label>
         <input matInput [matDatepicker]="picker">
         <mat-hint>MM/DD/YYYY</mat-hint>
@@ -52,7 +132,7 @@
 
     <!-- Campo Job ID -->
     <mat-grid-tile>
-      <mat-form-field appearance="fill" class="w-100">
+      <mat-form-field appearance="fill" class="w-75">
         <mat-label>Job ID</mat-label>
         <input matInput formControlName="job_id" required />
         <mat-error *ngIf="employeeForm.get('job_id')?.hasError('required')">El job ID es obligatorio</mat-error>
@@ -61,7 +141,7 @@
 
     <!-- Campo Salario -->
     <mat-grid-tile>
-      <mat-form-field appearance="fill" class="w-100">
+      <mat-form-field appearance="fill" class="w-75">
         <mat-label>Salario</mat-label>
         <input matInput formControlName="salary" required />
         <mat-error *ngIf="employeeForm.get('salary')?.hasError('required')">El salario es obligatorio</mat-error>
@@ -70,7 +150,7 @@
 
     <!-- Campo Porcentaje Comisión -->
     <mat-grid-tile>
-      <mat-form-field appearance="fill" class="w-100">
+      <mat-form-field appearance="fill" class="w-75">
         <mat-label>Porcentaje Comisión</mat-label>
         <input matInput formControlName="commission_pct" required />
         <mat-error *ngIf="employeeForm.get('commission_pct')?.hasError('required')">El porcentaje de comisión es obligatorio</mat-error>
@@ -79,21 +159,30 @@
 
     <!-- Campo ID Manager -->
     <mat-grid-tile>
-      <mat-form-field appearance="fill" class="w-100">
+      <mat-form-field appearance="fill" class="w-75">
         <mat-label>ID Manager</mat-label>
-        <input matInput formControlName="manager_id" required />
+        <mat-select formControlName="manager_id" required>
+          <mat-option *ngFor="let manager of managers" [value]="manager.employee_id">
+            {{ manager.first_name }} {{ manager.last_name }}
+          </mat-option>
+        </mat-select>
         <mat-error *ngIf="employeeForm.get('manager_id')?.hasError('required')">El ID Manager es obligatorio</mat-error>
       </mat-form-field>
     </mat-grid-tile>
 
     <!-- Campo ID Departamento -->
     <mat-grid-tile>
-      <mat-form-field appearance="fill" class="w-100">
-        <mat-label>ID Departamento</mat-label>
-        <input matInput formControlName="department_id" required />
-        <mat-error *ngIf="employeeForm.get('department_id')?.hasError('required')">El ID Departamento es obligatorio</mat-error>
+      <mat-form-field appearance="fill" class="w-75">
+        <mat-label>Departamento</mat-label>
+        <mat-select formControlName="department_id" required>
+          <mat-option *ngFor="let department of departments" [value]="department.department_id">
+            {{ department.department_name }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="employeeForm.get('department_id')?.hasError('required')">El departamento es obligatorio</mat-error>
       </mat-form-field>
-    </mat-grid-tile>
+    </mat-grid-tile>    
+
   </mat-grid-list>
 
   <!-- Botones de Acción -->
@@ -103,80 +192,36 @@
   </div>
 </form>
 
-<table mat-table [dataSource]="registros" class="mat-elevation-z8">
+<div class="mt-5">
+  <h2>Exportar e Importar Empleados</h2>
+  <div class="d-flex flex-column gap-4 mt-4">
 
-    <!-- Columna de ID -->
-    <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef> ID </th>
-      <td mat-cell *matCellDef="let element"> {{element.employee_id}} </td>
-    </ng-container>
-  
-    <!-- Columna de Nombre -->
-    <ng-container matColumnDef="Nombre">
-      <th mat-header-cell *matHeaderCellDef> Nombre </th>
-      <td mat-cell *matCellDef="let element"> {{element.first_name}} </td>
-    </ng-container>
-  
-    <!-- Columna de Apellido -->
-    <ng-container matColumnDef="Apellido">
-      <th mat-header-cell *matHeaderCellDef> Apellido </th>
-      <td mat-cell *matCellDef="let element"> {{element.last_name}} </td>
-    </ng-container>
-  
-    <!-- Columna de Correo -->
-    <ng-container matColumnDef="Email">
-      <th mat-header-cell *matHeaderCellDef> Email </th>
-      <td mat-cell *matCellDef="let element"> {{element.email}} </td>
-    </ng-container>
+    <!-- Exportar -->
+    <div class="d-flex justify-content-start align-items-center">
+      <button mat-raised-button color="primary" (click)="exportarEmpleados()" [disabled]="isLoading">
+        Exportar Empleados a CSV
+      </button>
+      <mat-progress-spinner
+        *ngIf="isLoading && currentAction === 'export'"
+        mode="indeterminate"
+        diameter="24"
+        class="ml-2">
+      </mat-progress-spinner>
+    </div>
 
-    <ng-container matColumnDef="Celular">
-        <th mat-header-cell *matHeaderCellDef> Celular </th>
-        <td mat-cell *matCellDef="let element"> {{element.phone_number}} </td>
-    </ng-container>
-    
-    <ng-container matColumnDef="Fecha de contrato">
-        <th mat-header-cell *matHeaderCellDef> Fecha de contrato </th>
-        <td mat-cell *matCellDef="let element"> {{element.hire_date}} </td>
-    </ng-container>
+    <!-- Importar -->
+    <div class="d-flex justify-content-start align-items-center">
+      <input type="file" #fileInput (change)="importarEmpleados($event)" accept=".csv" hidden />
+      <button mat-raised-button color="accent" (click)="fileInput.click()" [disabled]="isLoading">
+        Importar Empleados desde CSV
+      </button>
+      <mat-progress-spinner
+        *ngIf="isLoading && currentAction === 'import'"
+        mode="indeterminate"
+        diameter="24"
+        class="ml-2">
+      </mat-progress-spinner>
+    </div>
+  </div>
+</div>
 
-    <ng-container matColumnDef="job_id">
-        <th mat-header-cell *matHeaderCellDef> job_id </th>
-        <td mat-cell *matCellDef="let element"> {{element.job_id}} </td>
-    </ng-container>
-    
-    <ng-container matColumnDef="Salario">
-        <th mat-header-cell *matHeaderCellDef> Salario </th>
-        <td mat-cell *matCellDef="let element"> {{element.salary}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="Porcentaje comision">
-        <th mat-header-cell *matHeaderCellDef> Porcentaje Comision </th>
-        <td mat-cell *matCellDef="let element"> {{element.commission_pct}} </td>
-    </ng-container>
-    
-    <ng-container matColumnDef="Id manager">
-        <th mat-header-cell *matHeaderCellDef> Id manager </th>
-        <td mat-cell *matCellDef="let element"> {{element.manager_id}} </td>
-    </ng-container>
-    
-    <ng-container matColumnDef="Id departamento">
-        <th mat-header-cell *matHeaderCellDef> Id departamento </th>
-        <td mat-cell *matCellDef="let element"> {{element.department_id}} </td>
-    </ng-container>
-
-    <!-- Columna de Acciones -->
-    <ng-container matColumnDef="acciones">
-      <th mat-header-cell *matHeaderCellDef> Acciones </th>
-      <td mat-cell *matCellDef="let element">
-        <button mat-button color="primary" (click)="editarEmpleado(element)">Editar</button>
-        <button mat-button color="warn" (click)="eliminarEmpleado(element.employee_id)">Eliminar</button>
-      </td>
-    </ng-container>
-    
-  
-    <!-- Header y Rows -->
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
-  
-<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
