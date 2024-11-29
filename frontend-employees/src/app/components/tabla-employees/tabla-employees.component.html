@@ -133,8 +133,12 @@
     <!-- Campo Job ID -->
     <mat-grid-tile>
       <mat-form-field appearance="fill" class="w-75">
-        <mat-label>Job ID</mat-label>
-        <input matInput formControlName="job_id" required />
+        <mat-label>Trabajo</mat-label>
+        <mat-select formControlName="job_id" required>
+          <mat-option *ngFor="let job of jobs" [value]="job.job_id">
+            {{ job.job_title }}
+          </mat-option>
+        </mat-select>
         <mat-error *ngIf="employeeForm.get('job_id')?.hasError('required')">El job ID es obligatorio</mat-error>
       </mat-form-field>
     </mat-grid-tile>

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HrService } from '../../services/hr.service';
-import { Employee, Department } from '../../services/hr.service';
+import { Employee, Department, Job } from '../../services/hr.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ViewChild } from '@angular/core';
@@ -22,6 +22,7 @@ export class TablaEmployeesComponent {
   currentAction: 'import' | 'export' | null = null;
   managers: Employee[] = [];
   departments: Department[] = [];
+  jobs: Job[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
   @ViewChild(MatSort) sort: MatSort | null = null;
@@ -54,19 +55,29 @@ export class TablaEmployeesComponent {
           const department = departments.find(d => d.department_id === employee.department_id);
           employee['department_name'] = department ? department.department_name : 'N/A';
         });
-  
-        // Obtener managers
-        this.hrService.getEmployees().subscribe((managers: Employee[]) => {
-          employees.forEach(employee => {
-            const manager = managers.find(m => m.employee_id === employee.manager_id);
-            employee['manager_name'] = manager
-              ? `${manager.first_name} ${manager.last_name}`
-              : 'N/A';
-          });
-  
-          this.registros.data = employees;
+      });
+
+      // Obtener managers
+      this.hrService.getEmployees().subscribe((managers: Employee[]) => {
+        employees.forEach(employee => {
+          const manager = managers.find(m => m.employee_id === employee.manager_id);
+          employee['manager_name'] = manager
+            ? `${manager.first_name} ${manager.last_name}`
+            : 'N/A';
         });
       });
+
+      // Obtener trabajos
+      this.hrService.getJobs().subscribe((jobs: Job[]) => {
+        this.jobs = jobs;
+
+        employees.forEach(employee => {
+          const job = jobs.find(j => j.job_id === employee.job_id);
+          employee['job_id'] = job ? job.job_title : 'N/A';
+        });
+      });
+      
+      this.registros.data = employees;
     });
   }  
 

@@ -80,6 +80,18 @@ export class HrService {
       headers: this.getHeaders().delete('Content-Type'),
     });
   }
+
+  getJobs(): Observable<Job[]> {
+    return this.http.get<Job[]>(this.apiUrl + 'jobs', {
+      headers: this.getHeaders(),
+    });
+  }
+
+  getJobById(id: string): Observable<Job> {
+    return this.http.get<Job>(this.apiUrl + 'jobs/' + id, {
+      headers: this.getHeaders(),
+    });
+  }
 }
 
 export interface Employee {
@@ -103,4 +115,11 @@ export interface Department {
   department_name: string;
   manager_id: number;
   location_id: number;
+}
+
+export interface Job{
+  job_id: string;
+  job_title: string;
+  min_salary: number;
+  max_salary: number;
 }
