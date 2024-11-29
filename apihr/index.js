@@ -25,6 +25,7 @@ app.use(express.urlencoded({ extended: false }));
 //routes
 app.use(require('./routes/employees'));
 app.use(require('./routes/departments'));
+app.use(require('./routes/jobs'));
 
 app.post('/login', async (req, res) => {
     try {
